@@ -1,0 +1,26 @@
+/* Table Defaults */
+table {
+	float: left;
+	margin: 2px;
+	border-collapse: collapse;
+}
+table .empty {
+	background-color: gray;
+}
+table caption {
+	text-align: left;
+}
+table th {
+	border: 1px solid black;
+	padding: 2px;
+}
+table td {
+	border: 1px solid black;
+	padding: 2px;
+}
+table td.add-record {
+	font-family: monospace;
+}
+table td.delete-record {
+	font-family: monospace;
+}

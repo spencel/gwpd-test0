@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="public/edit-organism-db.js"></script>
+    <link rel="stylesheet" type="text/css" href="public/edit-organism-db.css">
+    <style>
+
+  	</style>
+  </head>
+  <body>
+  	<table id="organism" class="organism">
+  		<caption>Organisms</caption>
+  		<tr>
+    		<th>species name</th>
+    		<th>common name</th>
+        <th>type</th>
+        <th>family name</th>
+        <th>subfamily name</th>
+        <th>genus name</th>
+        <th>genome type</th>
+        <th>gram stain</th>
+        <th>genome length (bp)</th>
+        <th class="empty"></th>
+    	<tr id='new-record'>
+        <td>
+          <input id="speciesName" type="text" placeholder="add">
+        </td>
+        <td>
+          <input id="commonName" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="type" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="familyName" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="subfamilyName" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="genusName" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="genomeType" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="gramStain" type="text" placeholder="">
+        </td>
+        <td>
+          <input id="genomeLength" type="text" placeholder="">
+        </td>
+        <td>
+          <input id='add-record'class='add-record' type='submit' value='+'>
+        </td>
+      <tr>
+  	</table>
+    <!--<table id="artist" class="music">
+    	<caption>Artists</caption>
+    	<tr>
+    		<th>id</th>
+    		<th>name</th>
+    	<tr>
+    	<tr>
+    		<td></td>
+    		<td>
+    			<input id="artist" type="text" placeholder="new artist">
+    		</td>
+    	<tr>
+    </table>-->
+  </body>
+</html>
