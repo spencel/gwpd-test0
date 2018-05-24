@@ -1,0 +1,40 @@
+USE mockdatabase;
+LOCK TABLES 
+    organism WRITE,
+    organism_family WRITE,
+    organism_subfamily WRITE,
+    organism_genus write,
+    genome_type write,
+    gramstain_group write;
+
+ALTER TABLE organism
+    DROP FOREIGN KEY fk_Microorganisms_MicroorganismFamilies1,
+    DROP FOREIGN KEY fk_Microorganisms_MicroorganismSubfamilies1,
+    DROP FOREIGN KEY fk_Microorganisms_GramStainGroups1,
+    DROP FOREIGN KEY fk_Microorganisms_OrganismGenera1,
+    DROP FOREIGN KEY fk_Microorganisms_genomeTypes1;
+    MODIFY familyNameId SMALLINT UNSIGNED,
+    MODIFY subfamilyNameId SMALLINT UNSIGNED,
+    MODIFY genusNameId SMALLINT UNSIGNED,
+    MODIFY genomeTypeId SMALLINT UNSIGNED,
+    MODIFY gramStainId SMALLINT UNSIGNED;
+    
+ALTER TABLE organism_family MODIFY id SMALLINT UNSIGNED AUTO_INCREMENT;
+ALTER TABLE organism_subfamily MODIFY id SMALLINT UNSIGNED AUTO_INCREMENT;
+ALTER TABLE organism_genus MODIFY id SMALLINT UNSIGNED AUTO_INCREMENT;
+ALTER TABLE genome_type MODIFY id SMALLINT UNSIGNED AUTO_INCREMENT;
+ALTER TABLE gramstain_group MODIFY id SMALLINT UNSIGNED AUTO_INCREMENT;
+
+ALTER TABLE organism
+    ADD CONSTRAINT fk_organism_family_id FOREIGN KEY (familyNameId)
+          REFERENCES organism_family (id),
+	ADD CONSTRAINT fk_organism_subfamily_id FOREIGN KEY (subfamilyNameId)
+          REFERENCES organism_subfamily (id),
+	ADD CONSTRAINT fk_organism_genus_id FOREIGN KEY (genusNameId)
+          REFERENCES organism_genus (id),
+	ADD CONSTRAINT fk_genome_type_id FOREIGN KEY (genomeTypeId)
+          REFERENCES genome_type (id),
+	ADD CONSTRAINT fk_gramstain_group_id FOREIGN KEY (gramStainId)
+          REFERENCES gramstain_group (id);
+
+UNLOCK TABLES;
