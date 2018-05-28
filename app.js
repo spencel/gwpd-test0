@@ -53,12 +53,27 @@ app.get('/edit-organism-db', ( request, response ) => {
 	response.sendFile( __dirname + '/edit-organism-db.html' ); 
 });
 
-app.post( '/get-organism-table', ( request, response ) => {
+/*app.post( '/get-organism-table', ( request, response ) => {
 	mysqlConnection.query(
 		'SELECT * FROM organism',
 		( error, result ) => {
 			if ( error ) throw error;
 			// console.log( result );
+			response.send( result );
+	})
+})*/
+app.post( '/get-organism-table', ( request, response ) => {
+	var query = "SELECT species_name FROM organism \
+		INNER JOIN organism_type ON organism.type_id = organism_type.id \
+		INNER JOIN organism_family ON organism.family_name_id = organism_family.id \
+		INNER JOIN gram_stain_group ON organism.gram_stain_group_id = gram_stain_group.id";
+	console.log( `query: ${query}` );
+
+	mysqlConnection.query(
+		query,
+		( error, result ) => {
+			if ( error ) throw error;
+			console.log( result );
 			response.send( result );
 	})
 })
