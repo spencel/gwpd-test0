@@ -53,7 +53,7 @@ app.get('/edit-organism-db', ( request, response ) => {
 	response.sendFile( __dirname + '/edit-organism-db.html' ); 
 });
 
-/*app.post( '/get-organism-table', ( request, response ) => {
+app.post( '/get-organism-table', ( request, response ) => {
 	mysqlConnection.query(
 		'SELECT * FROM organism',
 		( error, result ) => {
@@ -61,10 +61,10 @@ app.get('/edit-organism-db', ( request, response ) => {
 			// console.log( result );
 			response.send( result );
 	})
-})*/
-app.post( '/get-organism-table', ( request, response ) => {
-	var query = "SELECT species_name FROM organism \
-		INNER JOIN organism_type ON organism.type_id = organism_type.id \
+});
+/*app.post( '/get-organism-table', ( request, response ) => {
+	var query = "SELECT * FROM organism \
+		INNER JOIN organism_type AS organism_type_* ON organism.type_id = organism_type.id \
 		INNER JOIN organism_family ON organism.family_name_id = organism_family.id \
 		INNER JOIN gram_stain_group ON organism.gram_stain_group_id = gram_stain_group.id";
 	console.log( `query: ${query}` );
@@ -76,7 +76,7 @@ app.post( '/get-organism-table', ( request, response ) => {
 			console.log( result );
 			response.send( result );
 	})
-})
+});*/
 
 app.post( '/add-organism', jsonParser, ( request, response ) => {
 	console.log( request.body );
