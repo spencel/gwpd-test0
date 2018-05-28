@@ -16,15 +16,15 @@ jQuery( document ).ready( function () {
 			for ( var iRecord in data ) {
 				jQuery( 'table#organism' ).append(
 					"<tr id='" + data[ iRecord ].id + "'>\
-						<td id='edit-speciesName'>" + data[ iRecord ].speciesName + "</td>\
-						<td id='edit-commonName'>" + data[ iRecord ].commonName + "</td>\
-						<td id='edit-type'>" + data[ iRecord ].typeId + "</td>\
-						<td id='edit-familyName'>" + data[ iRecord ].familyNameId + "</td>\
-						<td id='edit-subfamilyName'>" + data[ iRecord ].subfamilyNameId + "</td>\
-						<td id='edit-genusName'>" + data[ iRecord ].genusNameId + "</td>\
-						<td id='edit-genomeType'>" + data[ iRecord ].genomeTypeId + "</td>\
-						<td id='edit-gramStain'>" + data[ iRecord ].gramStainId + "</td>\
-						<td id='edit-genomeLength'>" + data[ iRecord ].genomeLength + "</td>\
+						<td id='edit-speciesName'>" + data[ iRecord ].species_name + "</td>\
+						<td id='edit-commonName'>" + data[ iRecord ].common_name + "</td>\
+						<td id='edit-type'>" + data[ iRecord ].type_id + "</td>\
+						<td id='edit-familyName'>" + data[ iRecord ].family_name_id + "</td>\
+						<td id='edit-subfamilyName'>" + data[ iRecord ].subfamily_name_id + "</td>\
+						<td id='edit-genusName'>" + data[ iRecord ].genus_name_id + "</td>\
+						<td id='edit-genomeType'>" + data[ iRecord ].genome_type_id + "</td>\
+						<td id='edit-gramStain'>" + data[ iRecord ].gram_stain_group_id + "</td>\
+						<td id='edit-genomeLength'>" + data[ iRecord ].genome_length_bp + "</td>\
 						<td>\
 							<input id='delete-record'class='delete' type='submit' value='X'>\
 						</td>\
@@ -83,9 +83,9 @@ jQuery( document ).ready( function () {
 			complete: function( response ) {
 				console.log( 'completing ajax' );
 				console.log( JSON.parse( response.responseText ));
-				var responseData = JSON.parse( response.responseText );
+				var data = JSON.parse( response.responseText );
 				console.log()
-				if ( responseData.recordAdded === true ) {
+				if ( data.recordAdded === true ) {
 
 					// reset values
 					jQuery( '#speciesName', newRecordTr ).val('');
@@ -100,18 +100,18 @@ jQuery( document ).ready( function () {
 
 					// append new record
 					console.log( 'set:' );
-					console.log( responseData.set );
+					console.log( data.set );
 					jQuery( 'table#organism' ).append(
-						"<tr id='" + responseData.id + "'>\
-							<td id='edit-speciesName'>" + responseData.set.speciesName + "</td>\
-							<td id='edit-commonName'>" + responseData.set.commonName + "</td>\
-							<td id='edit-type'>" + responseData.set.typeId + "</td>\
-							<td id='edit-familyName'>" + responseData.set.familyNameId + "</td>\
-							<td id='edit-subfamilyName'>" + responseData.set.subfamilyNameId + "</td>\
-							<td id='edit-genusName'>" + responseData.set.genusNameId + "</td>\
-							<td id='edit-genomeType'>" + responseData.set.genomeTypeId + "</td>\
-							<td id='edit-gramStain'>" + responseData.set.gramStainId + "</td>\
-							<td id='edit-genomeLength'>" + responseData.set.genomeLength + "</td>\
+						"<tr id='" + data.id + "'>\
+							<td id='edit-speciesName'>" + data.set.species_name + "</td>\
+							<td id='edit-commonName'>" + data.set.common_name + "</td>\
+							<td id='edit-type'>" + data.set.type_id + "</td>\
+							<td id='edit-familyName'>" + data.set.family_name_id + "</td>\
+							<td id='edit-subfamilyName'>" + data.set.subfamily_name_id + "</td>\
+							<td id='edit-genusName'>" + data.set.genus_name_id + "</td>\
+							<td id='edit-genomeType'>" + data.set.genome_type_id + "</td>\
+							<td id='edit-gramStain'>" + data.set.gram_stain_group_id + "</td>\
+							<td id='edit-genomeLength'>" + data.set.genome_length_bp + "</td>\
 							<td>\
 								<input id='delete-record'class='delete' type='submit' value='X'>\
 							</td>\

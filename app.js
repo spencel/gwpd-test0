@@ -12,10 +12,11 @@ var jsonParser = bodyParser.json()
 
 // Database connection
 
-var mysqlHostName = 'mysql.sl-sandbox.dreamhosters.com';
-var mysqlUserName = 'antiquebandwagon';
-var mysqlUserPassword = 'e9w2LcR5fLsLrDsL';
-var mysqlDatabase = 'gwpd_alpha_temp';
+//mysql://bf625d1cf3ab45:6d68558b@us-cdbr-iron-east-04.cleardb.net/heroku_b2cf77a96af7a57?reconnect=true
+var mysqlHostName = 'us-cdbr-iron-east-04.cleardb.net';
+var mysqlUserName = 'bf625d1cf3ab45';
+var mysqlUserPassword = '6d68558b';
+var mysqlDatabase = 'heroku_b2cf77a96af7a57';
 
 var mysqlConnection = mysql.createConnection({
 	host: mysqlHostName,
@@ -63,15 +64,15 @@ app.post( '/get-organism-table', ( request, response ) => {
 app.post( '/add-organism', jsonParser, ( request, response ) => {
 	console.log( request.body );
 	var set = {};
-	set.speciesName = request.body.speciesName;
-	set.commonName = request.body.commonName;
-	set.typeId = request.body.type;
-	set.familyNameId = request.body.familyName;
-	set.subfamilyNameId = request.body.subfamilyName;
-	set.genusNameId = request.body.genusName;
-	set.genomeTypeId = request.body.genomeType;
-	set.gramStainId = request.body.gramStain;
-	set.genomeLength = request.body.genomeLength;
+	set.species_name = request.body.speciesName;
+	set.common_name = request.body.commonName;
+	set.type_id = request.body.type;
+	set.family_name_id = request.body.familyName;
+	set.subfamily_name_id = request.body.subfamilyName;
+	set.genus_name_id = request.body.genusName;
+	set.genome_type_id = request.body.genomeType;
+	set.gram_stain_group_id = request.body.gramStain;
+	set.genome_length_bp = request.body.genomeLength;
 	mysqlConnection.query(
 		'INSERT INTO organism SET ?', 
 		set, 
