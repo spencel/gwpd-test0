@@ -55,40 +55,84 @@ app.get('/edit-organism-db', ( request, response ) => {
 
 app.post( '/get-organism-table', ( request, response ) => {
 	mysqlConnection.query(
-		'SELECT * FROM organism',
+		'SELECT * FROM organism_view',
 		( error, result ) => {
 			if ( error ) throw error;
 			// console.log( result );
 			response.send( result );
 	})
 });
-/*app.post( '/get-organism-table', ( request, response ) => {
-	var query = "SELECT * FROM organism \
-		INNER JOIN organism_type AS organism_type_* ON organism.type_id = organism_type.id \
-		INNER JOIN organism_family ON organism.family_name_id = organism_family.id \
-		INNER JOIN gram_stain_group ON organism.gram_stain_group_id = gram_stain_group.id";
-	console.log( `query: ${query}` );
-
-	mysqlConnection.query(
-		query,
-		( error, result ) => {
-			if ( error ) throw error;
-			console.log( result );
-			response.send( result );
-	})
-});*/
 
 app.post( '/add-organism', jsonParser, ( request, response ) => {
 	console.log( request.body );
 	var set = {};
 	set.species_name = request.body.speciesName;
 	set.common_name = request.body.commonName;
-	set.type_id = request.body.type;
-	set.family_name_id = request.body.familyName;
-	set.subfamily_name_id = request.body.subfamilyName;
-	set.genus_name_id = request.body.genusName;
-	set.genome_type_id = request.body.genomeType;
-	set.gram_stain_group_id = request.body.gramStain;
+	new Promise( ( resolve, reject ) => {
+			mysqlConnection.query( 
+			'SELECT id FROM organism_type WHERE name = ?',
+			request.body.type,
+			( error, result ) => {
+				if ( error ) throw error;
+				set.type_id = result[ 0 ].id;
+				resolve();
+			}
+		);
+	}).then( () => {
+		return new Promise( ( resolve, reject ) => {
+			mysqlConnection.query( 
+				'SELECT id FROM organism_family WHERE name = ?',
+				request.body.familyName,
+				( error, result ) => {
+					if ( error ) throw error;
+					set.family_id = result[ 0 ].id;
+					resolve();
+				}
+			);
+		});
+	}).then( () => {
+		return new Promise( ( resolve, reject ) => {
+			mysqlConnection.query( 
+				'SELECT id FROM organism_subfamily WHERE name = ?',
+				request.body.subfamilyName,
+				( error, result ) => {
+					if ( error ) throw error;
+					set.subfamily_id = result[ 0 ].id;
+					resolve();
+				}
+			);
+		});
+	}).then( () => {
+		return new Promise( ( resolve, reject ) => {
+			mysqlConnection.query( 
+				'SELECT id FROM organism_genus WHERE name = ?',
+				request.body.genusName,
+				( error, result ) => {
+					if ( error ) throw error;
+					set.genus_id = result[ 0 ].id;
+					resolve();
+				}
+			);
+		});
+	}).then( () => {
+		return new Promise( ( resolve, reject ) => {
+			mysqlConnection.query( 
+				'SELECT id FROM organism_type WHERE name = ?',
+				request.body.type,
+				( error, result ) => {
+					if ( error ) throw error;
+					set.genus_id = result[ 0 ].id;
+					resolve();
+				}
+			);
+		});
+	}).then( () => {
+		console.log( set );
+		response.send( { recordAdded: false } );
+	});
+	/*
+	set.genome_type_name = request.body.genomeType;
+	set.gram_stain_group_name = request.body.gramStain;
 	set.genome_length_bp = request.body.genomeLength;
 	mysqlConnection.query(
 		'INSERT INTO organism SET ?', 
@@ -102,7 +146,8 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				recordAdded: true
 			});
 		}
-	);
+	);*/
+	
 });
 
 app.post( '/delete-organism', jsonParser, ( request, response ) => {

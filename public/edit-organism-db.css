@@ -7,20 +7,23 @@ table {
 table .empty {
 	background-color: gray;
 }
-table caption {
+caption {
 	text-align: left;
 }
-table th {
+th {
 	border: 1px solid black;
 	padding: 2px;
 }
-table td {
+td {
 	border: 1px solid black;
 	padding: 2px;
 }
-table td.add-record {
+td.add-record {
 	font-family: monospace;
 }
-table td.delete-record {
+td.delete-record {
 	font-family: monospace;
+}
+td input[type="text"] {
+	width: calc(100% - 4px);
 }

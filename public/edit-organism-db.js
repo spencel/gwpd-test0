@@ -18,12 +18,12 @@ jQuery( document ).ready( function () {
 					"<tr id='" + data[ iRecord ].id + "'>\
 						<td id='edit-speciesName'>" + data[ iRecord ].species_name + "</td>\
 						<td id='edit-commonName'>" + data[ iRecord ].common_name + "</td>\
-						<td id='edit-type'>" + data[ iRecord ].type_id + "</td>\
-						<td id='edit-familyName'>" + data[ iRecord ].family_name_id + "</td>\
-						<td id='edit-subfamilyName'>" + data[ iRecord ].subfamily_name_id + "</td>\
-						<td id='edit-genusName'>" + data[ iRecord ].genus_name_id + "</td>\
-						<td id='edit-genomeType'>" + data[ iRecord ].genome_type_id + "</td>\
-						<td id='edit-gramStain'>" + data[ iRecord ].gram_stain_group_id + "</td>\
+						<td id='edit-typeName'>" + data[ iRecord ].type_name + "</td>\
+						<td id='edit-familyName'>" + data[ iRecord ].family_name + "</td>\
+						<td id='edit-subfamilyName'>" + data[ iRecord ].subfamily_name + "</td>\
+						<td id='edit-genusName'>" + data[ iRecord ].genus_name + "</td>\
+						<td id='edit-genomeType'>" + data[ iRecord ].genome_type_name + "</td>\
+						<td id='edit-gramStain'>" + data[ iRecord ].gram_stain_group_name + "</td>\
 						<td id='edit-genomeLength'>" + data[ iRecord ].genome_length_bp + "</td>\
 						<td>\
 							<input id='delete-record'class='delete' type='submit' value='X'>\
@@ -65,7 +65,7 @@ jQuery( document ).ready( function () {
 		var payload = {
 			speciesName: jQuery( '#speciesName', newRecordTr ).val(),
 			commonName: jQuery( '#commonName', newRecordTr ).val(),
-			type: jQuery( '#type', newRecordTr ).val(),
+			typeName: jQuery( '#typeName', newRecordTr ).val(),
 			familyName: jQuery( '#familyName', newRecordTr ).val(),
 			subfamilyName: jQuery( '#subfamilyName', newRecordTr ).val(),
 			genusName: jQuery( '#genusName', newRecordTr ).val(),
@@ -76,12 +76,13 @@ jQuery( document ).ready( function () {
 		console.log( payload );
 		jQuery.ajax({
 			url: '/add-organism',
-			type: 'POST',
+			typeName: 'POST',
 			contentType: 'application/json',
 			processData: false,
 			data: JSON.stringify( payload ),
 			complete: function( response ) {
 				console.log( 'completing ajax' );
+				console.log( `response text: ${response.responseText}` );
 				console.log( JSON.parse( response.responseText ));
 				var data = JSON.parse( response.responseText );
 				console.log()
@@ -90,7 +91,7 @@ jQuery( document ).ready( function () {
 					// reset values
 					jQuery( '#speciesName', newRecordTr ).val('');
 					jQuery( '#commonName', newRecordTr ).val('');
-					jQuery( '#type', newRecordTr ).val('');
+					jQuery( '#typeName', newRecordTr ).val('');
 					jQuery( '#familyName', newRecordTr ).val('');
 					jQuery( '#subfamilyName', newRecordTr ).val('');
 					jQuery( '#genusName', newRecordTr ).val('');
@@ -105,12 +106,12 @@ jQuery( document ).ready( function () {
 						"<tr id='" + data.id + "'>\
 							<td id='edit-speciesName'>" + data.set.species_name + "</td>\
 							<td id='edit-commonName'>" + data.set.common_name + "</td>\
-							<td id='edit-type'>" + data.set.type_id + "</td>\
-							<td id='edit-familyName'>" + data.set.family_name_id + "</td>\
-							<td id='edit-subfamilyName'>" + data.set.subfamily_name_id + "</td>\
-							<td id='edit-genusName'>" + data.set.genus_name_id + "</td>\
-							<td id='edit-genomeType'>" + data.set.genome_type_id + "</td>\
-							<td id='edit-gramStain'>" + data.set.gram_stain_group_id + "</td>\
+							<td id='edit-typeName'>" + data.set.type_name + "</td>\
+							<td id='edit-familyName'>" + data.set.family_name + "</td>\
+							<td id='edit-subfamilyName'>" + data.set.subfamily_name + "</td>\
+							<td id='edit-genusName'>" + data.set.genus_name + "</td>\
+							<td id='edit-genomeType'>" + data.set.genome_type_name + "</td>\
+							<td id='edit-gramStain'>" + data.set.gram_stain_group_name + "</td>\
 							<td id='edit-genomeLength'>" + data.set.genome_length_bp + "</td>\
 							<td>\
 								<input id='delete-record'class='delete' type='submit' value='X'>\
