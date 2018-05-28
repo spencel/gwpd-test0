@@ -7,8 +7,10 @@ const bodyParser = require( 'body-parser' );
 // Globals
 
 var app = express();
+var port = process.env.PORT || 8080 // process.env.PORT lets the port be set by Heroku 
 var urlencodedParser = bodyParser.urlencoded( { extended: false } );
 var jsonParser = bodyParser.json()
+
 
 // Database connection
 
@@ -37,7 +39,7 @@ mysqlConnection.connect( error => {
 
 // Configuration
 
-app.use( "/public", express.static( __dirname + "/public" ));
+app.use( "/public", express.static( __dirname + "/public" )); // make express look in the public directory for assets (css/js/img)
 
 // Routes sends our HTML file
 
@@ -171,6 +173,6 @@ app.post('/artist', jsonParser, function ( request, response ) {
 
 // Begin listening
 
-app.listen(3000, () => {
-	console.log( 'Listening on port 3000.' );
+app.listen( port, () => {
+	console.log( `Our app is running on heroku_b2cf77a96af7a57 (or localhost) and listening on port ${port}` );
 });
