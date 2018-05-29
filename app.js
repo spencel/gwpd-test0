@@ -84,7 +84,13 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 			request.body.typeName,
 			( error, result ) => {
 				if ( error ) { response.send( {recordAdded: false } ); }
-				if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+				console.log( result.length );
+				if ( result.length === 0 ) { 
+					console.log('reject');
+					response.send( {recordAdded: false } );
+					reject();
+					return
+				}
 				set.type_id = result[ 0 ].id;
 				console.log( `set.type_id: ${set.type_id}`);
 				resolve();
@@ -97,7 +103,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				request.body.familyName,
 				( error, result ) => {
 					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+					if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 					set.family_id = result[ 0 ].id;
 					console.log( `set.family_id: ${set.family_id}`);
 					resolve();
@@ -111,7 +122,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				request.body.subfamilyName,
 				( error, result ) => {
 					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+					if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 					set.subfamily_id = result[ 0 ].id;
 					console.log( `set.subfamily_id: ${set.subfamily_id}`);
 					resolve();
@@ -125,7 +141,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				request.body.genusName,
 				( error, result ) => {
 					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+					if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 					set.genus_id = result[ 0 ].id;
 					console.log( `set.genus_id: ${set.genus_id}`);
 					resolve();
@@ -139,7 +160,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				request.body.gramStainGroupName,
 				( error, result ) => {
 					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+					if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 					set.gram_stain_group_id = result[ 0 ].id;
 					console.log( `set.gram_stain_group_id: ${set.gram_stain_group}`);
 					resolve();
@@ -153,7 +179,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				request.body.genomeTypeName,
 				( error, result ) => {
 					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+					if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 					set.genome_type_id = result[ 0 ].id;
 					console.log( `set.genome_type_id: ${set.genome_type_id}`);
 					resolve();
@@ -167,7 +198,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				set, 
 				( error, result ) => {
 					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+					if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 					console.log( 'set:' );
 					console.log( set );
 					console.log( 'result:' );
@@ -182,7 +218,12 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 			resolved.insertId, 
 			( error, result ) => {
 				if ( error ) { response.send( {recordAdded: false } ); }
-				if ( result[ 0 ].id === undefined ) { response.send( {recordAdded: false } ); }
+				if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordAdded: false } );
+						reject();
+						return
+					}
 				console.log( 'set:' );
 				console.log( set );
 				console.log( 'result:' );
@@ -206,6 +247,12 @@ app.post( '/delete-organism', jsonParser, ( request, response ) => {
 		id, 
 		( error, result ) => {
 			if ( error ) { response.send( { recordDeleted: false } ) };
+			if ( result.length === 0 ) { 
+						console.log('reject');
+						response.send( {recordDeleted: false } );
+						reject();
+						return
+					}
 			console.log( result );
 			response.send({
 				recordDeleted: true
