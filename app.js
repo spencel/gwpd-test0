@@ -49,6 +49,8 @@ app.get('/', ( request, response ) => {
 
 // START Organism Database
 
+
+
 app.get('/edit-organism-db', ( request, response ) => {
 	response.sendFile( __dirname + '/edit-organism-db.html' ); 
 });
@@ -64,17 +66,21 @@ app.post( '/get-organism-table', ( request, response ) => {
 });
 
 app.post( '/add-organism', jsonParser, ( request, response ) => {
+	//response.sendFile( __dirname + '/index.html' ); 
+	console.log( 'request.body:' );
 	console.log( request.body );
 	var set = {};
 	set.species_name = request.body.speciesName;
 	set.common_name = request.body.commonName;
+	set.genome_length_bp = request.body.genomeLength;
 	new Promise( ( resolve, reject ) => {
 			mysqlConnection.query( 
 			'SELECT id FROM organism_type WHERE name = ?',
-			request.body.type,
+			request.body.typeName,
 			( error, result ) => {
 				if ( error ) throw error;
 				set.type_id = result[ 0 ].id;
+				console.log( `set.type_id: ${set.type_id}`);
 				resolve();
 			}
 		);
@@ -86,6 +92,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				( error, result ) => {
 					if ( error ) throw error;
 					set.family_id = result[ 0 ].id;
+					console.log( `set.family_id: ${set.family_id}`);
 					resolve();
 				}
 			);
@@ -98,6 +105,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				( error, result ) => {
 					if ( error ) throw error;
 					set.subfamily_id = result[ 0 ].id;
+					console.log( `set.subfamily_id: ${set.subfamily_id}`);
 					resolve();
 				}
 			);
@@ -110,6 +118,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				( error, result ) => {
 					if ( error ) throw error;
 					set.genus_id = result[ 0 ].id;
+					console.log( `set.genus_id: ${set.genus_id}`);
 					resolve();
 				}
 			);
@@ -117,37 +126,63 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 	}).then( () => {
 		return new Promise( ( resolve, reject ) => {
 			mysqlConnection.query( 
-				'SELECT id FROM organism_type WHERE name = ?',
-				request.body.type,
+				'SELECT id FROM gram_stain_group WHERE name = ?',
+				request.body.gramStainGroupName,
 				( error, result ) => {
 					if ( error ) throw error;
-					set.genus_id = result[ 0 ].id;
+					set.gram_stain_group_id = result[ 0 ].id;
+					console.log( `set.gram_stain_group_id: ${set.gram_stain_group}`);
 					resolve();
 				}
 			);
 		});
 	}).then( () => {
-		console.log( set );
-		response.send( { recordAdded: false } );
+		return new Promise( ( resolve, reject ) => {
+			mysqlConnection.query( 
+				'SELECT id FROM genome_type WHERE name = ?',
+				request.body.genomeTypeName,
+				( error, result ) => {
+					if ( error ) throw error;
+					set.genome_type_id = result[ 0 ].id;
+					console.log( `set.genome_type_id: ${set.genome_type_id}`);
+					resolve();
+				}
+			);
+		});
+	}).then( () => {
+		return new Promise( ( resolve, reject ) => {
+			mysqlConnection.query(
+				'INSERT INTO organism SET ?', 
+				set, 
+				( error, result ) => {
+					if ( error ) throw error;
+					console.log( 'set:' );
+					console.log( set );
+					console.log( 'result:' );
+					console.log( result );
+					resolve( result );
+				}
+			);
+		});
+	}).then( resolved => {
+		mysqlConnection.query(
+			'SELECT * FROM organism_view WHERE id = ?', 
+			resolved.insertId, 
+			( error, result ) => {
+				if ( error ) throw error;
+				console.log( 'set:' );
+				console.log( set );
+				console.log( 'result:' );
+				console.log( result );
+				//response.send( { recordAdded: false } );
+				response.send({ 
+					id: resolved.insertId,
+					record: result,
+					recordAdded: true
+				});
+			}
+		);
 	});
-	/*
-	set.genome_type_name = request.body.genomeType;
-	set.gram_stain_group_name = request.body.gramStain;
-	set.genome_length_bp = request.body.genomeLength;
-	mysqlConnection.query(
-		'INSERT INTO organism SET ?', 
-		set, 
-		function ( error, result ) {
-			if ( error ) throw error;
-			console.log( result );
-			response.send({ 
-				id: result.insertId,
-				set: set,
-				recordAdded: true
-			});
-		}
-	);*/
-	
 });
 
 app.post( '/delete-organism', jsonParser, ( request, response ) => {
