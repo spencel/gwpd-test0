@@ -37,8 +37,8 @@ mysqlConnection.connect( error => {
 
 	console.log( `Connected to ${mysqlHostName} MySQL database as user ${mysqlUserName}.` );
 });
+mysqlConnection.end();
 
-// mysqlConnection.query('INSERT INTO artist ( name ) VALUE ( ? )', 'test2'); // this works
 
 
 // Configuration
@@ -60,6 +60,9 @@ app.get('/edit-organism-db', ( request, response ) => {
 });
 
 app.post( '/get-organism-table', ( request, response ) => {
+	mysqlConnection.connect( error => {
+		if ( error ) throw error;
+	});
 	mysqlConnection.query(
 		'SELECT * FROM organism_view',
 		( error, result ) => {
@@ -67,9 +70,13 @@ app.post( '/get-organism-table', ( request, response ) => {
 			// console.log( result );
 			response.send( result );
 	})
+	mysqlConnection.end();
 });
 
 app.post( '/add-organism', jsonParser, ( request, response ) => {
+	mysqlConnection.connect( error => {
+		if ( error ) throw error;
+	});
 	//response.sendFile( __dirname + '/index.html' ); 
 	console.log( 'request.body:' );
 	console.log( request.body );
@@ -236,9 +243,13 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 			}
 		);
 	});
+	mysqlConnection.end();
 });
 
 app.post( '/delete-organism', jsonParser, ( request, response ) => {
+	mysqlConnection.connect( error => {
+		if ( error ) throw error;
+	});
 	console.log( request.body );
 	var id = request.body.id;
 	mysqlConnection.query(
@@ -258,6 +269,7 @@ app.post( '/delete-organism', jsonParser, ( request, response ) => {
 			});
 		}
 	);
+	mysqlConnection.end();
 });
 
 // END Organism Database
