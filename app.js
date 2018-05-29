@@ -54,6 +54,7 @@ app.use( "/public", express.static( __dirname + "/public" )); // make express lo
 // Routes sends our HTML file
 
 app.get('/', ( request, response ) => {
+	console.log( 'getting /index.html' );
 	response.sendFile( __dirname + '/index.html' ); 
 });
 
@@ -62,6 +63,7 @@ app.get('/', ( request, response ) => {
 
 
 app.get('/edit-organism-db', ( request, response ) => {
+	console.log( 'getting /edit-organism-db')
 	response.sendFile( __dirname + '/edit-organism-db.html' ); 
 });
 

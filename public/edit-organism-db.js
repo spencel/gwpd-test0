@@ -100,9 +100,9 @@ jQuery( document ).ready( function () {
 	// Handle click events
 	jQuery( document )
 	.on( 'click', function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-		event.stopImmediatePropagation();
+		//event.preventDefault();
+		//event.stopPropagation();
+		//event.stopImmediatePropagation();
 
 		console.log( event );
 		var action = event.target.id;
