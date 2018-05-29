@@ -24,7 +24,7 @@ var mysqlUserName = 'bf625d1cf3ab45';
 var mysqlUserPassword = '6d68558b';
 var mysqlDatabase = 'heroku_b2cf77a96af7a57';
 
-var mysqlConnection = mysql.createConnection({
+/*var mysqlConnection = mysql.createConnection({
 	host: mysqlHostName,
 	user: mysqlUserName,
 	password: mysqlUserPassword,
@@ -36,10 +36,16 @@ mysqlConnection.connect( error => {
 	if ( error ) throw error;
 
 	console.log( `Connected to ${mysqlHostName} MySQL database as user ${mysqlUserName}.` );
+	//mysqlConnection.end();
+});*/
+
+var mysqlPool = mysql.createPool({
+	connectionLimit: 100,
+	host: mysqlHostName,
+	user: mysqlUserName,
+	password: mysqlUserPassword,
+	database: mysqlDatabase
 });
-mysqlConnection.end();
-
-
 
 // Configuration
 
@@ -60,23 +66,19 @@ app.get('/edit-organism-db', ( request, response ) => {
 });
 
 app.post( '/get-organism-table', ( request, response ) => {
-	mysqlConnection.connect( error => {
-		if ( error ) throw error;
-	});
-	mysqlConnection.query(
-		'SELECT * FROM organism_view',
-		( error, result ) => {
+	mysqlPool.getConnection( ( error, connection ) => {
+		connection.query(
+			'SELECT * FROM organism_view',
+			( error, result ) => {
+			connection.release();
 			if ( error ) { reponse.send( "" ); }
 			// console.log( result );
 			response.send( result );
-	})
-	mysqlConnection.end();
+		});
+	});
 });
 
 app.post( '/add-organism', jsonParser, ( request, response ) => {
-	mysqlConnection.connect( error => {
-		if ( error ) throw error;
-	});
 	//response.sendFile( __dirname + '/index.html' ); 
 	console.log( 'request.body:' );
 	console.log( request.body );
@@ -85,124 +87,167 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 	set.common_name = request.body.commonName;
 	set.genome_length_bp = request.body.genomeLength;
 	new Promise( ( resolve, reject ) => {
-			mysqlConnection.query( 
-			'SELECT id FROM organism_type WHERE name = ?',
-			request.body.typeName,
-			( error, result ) => {
-				if ( error ) { response.send( {recordAdded: false } ); }
-				console.log( result.length );
-				if ( result.length === 0 ) { 
-					console.log('reject');
-					response.send( {recordAdded: false } );
-					reject();
-					return
-				}
-				set.type_id = result[ 0 ].id;
-				console.log( `set.type_id: ${set.type_id}`);
-				resolve();
-			}
-		);
-	}).then( () => {
-		return new Promise( ( resolve, reject ) => {
-			mysqlConnection.query( 
-				'SELECT id FROM organism_family WHERE name = ?',
-				request.body.familyName,
+			mysqlPool.getConnection( ( error, connection ) => {
+				connection.query( 
+				'SELECT id FROM organism_type WHERE name = ?',
+				request.body.typeName,
 				( error, result ) => {
+					connection.release();
 					if ( error ) { response.send( {recordAdded: false } ); }
+					console.log( result.length );
 					if ( result.length === 0 ) { 
 						console.log('reject');
 						response.send( {recordAdded: false } );
 						reject();
 						return
 					}
-					set.family_id = result[ 0 ].id;
-					console.log( `set.family_id: ${set.family_id}`);
+					set.type_id = result[ 0 ].id;
+					console.log( `set.type_id: ${set.type_id}`);
 					resolve();
 				}
 			);
 		});
 	}).then( () => {
 		return new Promise( ( resolve, reject ) => {
-			mysqlConnection.query( 
-				'SELECT id FROM organism_subfamily WHERE name = ?',
-				request.body.subfamilyName,
-				( error, result ) => {
-					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result.length === 0 ) { 
-						console.log('reject');
-						response.send( {recordAdded: false } );
-						reject();
-						return
+			mysqlPool.getConnection( ( error, connection ) => {
+					connection.query(
+					'SELECT id FROM organism_family WHERE name = ?',
+					request.body.familyName,
+					( error, result ) => {
+						connection.release();
+						if ( error ) { response.send( {recordAdded: false } ); }
+						if ( result.length === 0 ) { 
+							console.log('reject');
+							response.send( {recordAdded: false } );
+							reject();
+							return
+						}
+						set.family_id = result[ 0 ].id;
+						console.log( `set.family_id: ${set.family_id}`);
+						resolve();
 					}
-					set.subfamily_id = result[ 0 ].id;
-					console.log( `set.subfamily_id: ${set.subfamily_id}`);
-					resolve();
-				}
-			);
+				);
+			});
 		});
 	}).then( () => {
 		return new Promise( ( resolve, reject ) => {
-			mysqlConnection.query( 
-				'SELECT id FROM organism_genus WHERE name = ?',
-				request.body.genusName,
-				( error, result ) => {
-					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result.length === 0 ) { 
-						console.log('reject');
-						response.send( {recordAdded: false } );
-						reject();
-						return
+			mysqlPool.getConnection( ( error, connection ) => {
+				connection.query(
+					'SELECT id FROM organism_subfamily WHERE name = ?',
+					request.body.subfamilyName,
+					( error, result ) => {
+						connection.release();
+						if ( error ) { response.send( {recordAdded: false } ); }
+						if ( result.length === 0 ) { 
+							console.log('reject');
+							response.send( {recordAdded: false } );
+							reject();
+							return
+						}
+						set.subfamily_id = result[ 0 ].id;
+						console.log( `set.subfamily_id: ${set.subfamily_id}`);
+						resolve();
 					}
-					set.genus_id = result[ 0 ].id;
-					console.log( `set.genus_id: ${set.genus_id}`);
-					resolve();
-				}
-			);
+				);
+			});
 		});
 	}).then( () => {
 		return new Promise( ( resolve, reject ) => {
-			mysqlConnection.query( 
-				'SELECT id FROM gram_stain_group WHERE name = ?',
-				request.body.gramStainGroupName,
-				( error, result ) => {
-					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result.length === 0 ) { 
-						console.log('reject');
-						response.send( {recordAdded: false } );
-						reject();
-						return
+			mysqlPool.getConnection( ( error, connection ) => {
+				connection.query(
+					'SELECT id FROM organism_genus WHERE name = ?',
+					request.body.genusName,
+					( error, result ) => {
+						connection.release();
+						if ( error ) { response.send( {recordAdded: false } ); }
+						if ( result.length === 0 ) { 
+							console.log('reject');
+							response.send( {recordAdded: false } );
+							reject();
+							return
+						}
+						set.genus_id = result[ 0 ].id;
+						console.log( `set.genus_id: ${set.genus_id}`);
+						resolve();
 					}
-					set.gram_stain_group_id = result[ 0 ].id;
-					console.log( `set.gram_stain_group_id: ${set.gram_stain_group}`);
-					resolve();
-				}
-			);
+				);
+			});
 		});
 	}).then( () => {
 		return new Promise( ( resolve, reject ) => {
-			mysqlConnection.query( 
-				'SELECT id FROM genome_type WHERE name = ?',
-				request.body.genomeTypeName,
-				( error, result ) => {
-					if ( error ) { response.send( {recordAdded: false } ); }
-					if ( result.length === 0 ) { 
-						console.log('reject');
-						response.send( {recordAdded: false } );
-						reject();
-						return
+			mysqlPool.getConnection( ( error, connection ) => {
+				connection.query(
+					'SELECT id FROM gram_stain_group WHERE name = ?',
+					request.body.gramStainGroupName,
+					( error, result ) => {
+						connection.release();
+						if ( error ) { response.send( {recordAdded: false } ); }
+						if ( result.length === 0 ) { 
+							console.log('reject');
+							response.send( {recordAdded: false } );
+							reject();
+							return
+						}
+						set.gram_stain_group_id = result[ 0 ].id;
+						console.log( `set.gram_stain_group_id: ${set.gram_stain_group}`);
+						resolve();
 					}
-					set.genome_type_id = result[ 0 ].id;
-					console.log( `set.genome_type_id: ${set.genome_type_id}`);
-					resolve();
-				}
-			);
+				);
+			});
 		});
 	}).then( () => {
 		return new Promise( ( resolve, reject ) => {
-			mysqlConnection.query(
-				'INSERT INTO organism SET ?', 
-				set, 
+			mysqlPool.getConnection( ( error, connection ) => {
+				connection.query(
+					'SELECT id FROM genome_type WHERE name = ?',
+					request.body.genomeTypeName,
+					( error, result ) => {
+						connection.release();
+						if ( error ) { response.send( {recordAdded: false } ); }
+						if ( result.length === 0 ) { 
+							console.log('reject');
+							response.send( {recordAdded: false } );
+							reject();
+							return
+						}
+						set.genome_type_id = result[ 0 ].id;
+						console.log( `set.genome_type_id: ${set.genome_type_id}`);
+						resolve();
+					}
+				);
+			});
+		});
+	}).then( () => {
+		return new Promise( ( resolve, reject ) => {
+			mysqlPool.getConnection( ( error, connection ) => {
+				connection.query(
+					'INSERT INTO organism SET ?', 
+					set, 
+					( error, result ) => {
+						connection.release();
+						if ( error ) { response.send( {recordAdded: false } ); }
+						if ( result.length === 0 ) { 
+							console.log('reject');
+							response.send( {recordAdded: false } );
+							reject();
+							return
+						}
+						console.log( 'set:' );
+						console.log( set );
+						console.log( 'result:' );
+						console.log( result );
+						resolve( result );
+					}
+				);
+			});
+		});
+	}).then( resolved => {
+		mysqlPool.getConnection( ( error, connection ) => {
+			connection.query(
+				'SELECT * FROM organism_view WHERE id = ?', 
+				resolved.insertId, 
 				( error, result ) => {
+					connection.release();
 					if ( error ) { response.send( {recordAdded: false } ); }
 					if ( result.length === 0 ) { 
 						console.log('reject');
@@ -214,62 +259,41 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 					console.log( set );
 					console.log( 'result:' );
 					console.log( result );
-					resolve( result );
+					//response.send( { recordAdded: false } );
+					response.send({ 
+						id: resolved.insertId,
+						record: result,
+						recordAdded: true
+					});
 				}
 			);
 		});
-	}).then( resolved => {
-		mysqlConnection.query(
-			'SELECT * FROM organism_view WHERE id = ?', 
-			resolved.insertId, 
+	});
+});
+
+app.post( '/delete-organism', jsonParser, ( request, response ) => {
+	console.log( request.body );
+	var id = request.body.id;
+	mysqlPool.getConnection( ( error, connection ) => {
+		connection.query(
+			'DELETE FROM organism WHERE id = ? ', 
+			id, 
 			( error, result ) => {
-				if ( error ) { response.send( {recordAdded: false } ); }
+				connection.release();
+				if ( error ) { response.send( { recordDeleted: false } ) };
 				if ( result.length === 0 ) { 
-						console.log('reject');
-						response.send( {recordAdded: false } );
-						reject();
-						return
-					}
-				console.log( 'set:' );
-				console.log( set );
-				console.log( 'result:' );
+							console.log('reject');
+							response.send( {recordDeleted: false } );
+							reject();
+							return
+						}
 				console.log( result );
-				//response.send( { recordAdded: false } );
-				response.send({ 
-					id: resolved.insertId,
-					record: result,
-					recordAdded: true
+				response.send({
+					recordDeleted: true
 				});
 			}
 		);
 	});
-	mysqlConnection.end();
-});
-
-app.post( '/delete-organism', jsonParser, ( request, response ) => {
-	mysqlConnection.connect( error => {
-		if ( error ) throw error;
-	});
-	console.log( request.body );
-	var id = request.body.id;
-	mysqlConnection.query(
-		'DELETE FROM organism WHERE id = ? ', 
-		id, 
-		( error, result ) => {
-			if ( error ) { response.send( { recordDeleted: false } ) };
-			if ( result.length === 0 ) { 
-						console.log('reject');
-						response.send( {recordDeleted: false } );
-						reject();
-						return
-					}
-			console.log( result );
-			response.send({
-				recordDeleted: true
-			});
-		}
-	);
-	mysqlConnection.end();
 });
 
 // END Organism Database
