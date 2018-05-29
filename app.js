@@ -71,7 +71,6 @@ app.post( '/get-organism-table', ( request, response ) => {
 });
 
 app.post( '/add-organism', jsonParser, ( request, response ) => {
-	try
 	//response.sendFile( __dirname + '/index.html' ); 
 	console.log( 'request.body:' );
 	console.log( request.body );
