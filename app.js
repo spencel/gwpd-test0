@@ -34,7 +34,7 @@ var mysqlConnection = mysql.createConnection({
 	
 // Test connection
 mysqlConnection.connect( error => {
-	//if ( error ) throw error;
+	if ( error ) throw error;
 
 	console.log( `Connected to ${mysqlHostName} MySQL database as user ${mysqlUserName}.` );
 });
@@ -64,7 +64,7 @@ app.post( '/get-organism-table', ( request, response ) => {
 	mysqlConnection.query(
 		'SELECT * FROM organism_view',
 		( error, result ) => {
-			//if ( error ) throw error;
+			if ( error ) { reponse.send( "" ); }
 			// console.log( result );
 			response.send( result );
 	})
@@ -83,7 +83,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 			'SELECT id FROM organism_type WHERE name = ?',
 			request.body.typeName,
 			( error, result ) => {
-				//if ( error ) throw error;
+				if ( error ) { response.send( {recordAdded: false } ); }
 				set.type_id = result[ 0 ].id;
 				console.log( `set.type_id: ${set.type_id}`);
 				resolve();
@@ -95,7 +95,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				'SELECT id FROM organism_family WHERE name = ?',
 				request.body.familyName,
 				( error, result ) => {
-					//if ( error ) throw error;
+					if ( error ) { response.send( {recordAdded: false } ); }
 					set.family_id = result[ 0 ].id;
 					console.log( `set.family_id: ${set.family_id}`);
 					resolve();
@@ -108,7 +108,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				'SELECT id FROM organism_subfamily WHERE name = ?',
 				request.body.subfamilyName,
 				( error, result ) => {
-					//if ( error ) throw error;
+					if ( error ) { response.send( {recordAdded: false } ); }
 					set.subfamily_id = result[ 0 ].id;
 					console.log( `set.subfamily_id: ${set.subfamily_id}`);
 					resolve();
@@ -121,7 +121,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				'SELECT id FROM organism_genus WHERE name = ?',
 				request.body.genusName,
 				( error, result ) => {
-					//if ( error ) throw error;
+					if ( error ) { response.send( {recordAdded: false } ); }
 					set.genus_id = result[ 0 ].id;
 					console.log( `set.genus_id: ${set.genus_id}`);
 					resolve();
@@ -134,7 +134,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				'SELECT id FROM gram_stain_group WHERE name = ?',
 				request.body.gramStainGroupName,
 				( error, result ) => {
-					//if ( error ) throw error;
+					if ( error ) { response.send( {recordAdded: false } ); }
 					set.gram_stain_group_id = result[ 0 ].id;
 					console.log( `set.gram_stain_group_id: ${set.gram_stain_group}`);
 					resolve();
@@ -147,7 +147,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				'SELECT id FROM genome_type WHERE name = ?',
 				request.body.genomeTypeName,
 				( error, result ) => {
-					//if ( error ) throw error;
+					if ( error ) { response.send( {recordAdded: false } ); }
 					set.genome_type_id = result[ 0 ].id;
 					console.log( `set.genome_type_id: ${set.genome_type_id}`);
 					resolve();
@@ -160,7 +160,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 				'INSERT INTO organism SET ?', 
 				set, 
 				( error, result ) => {
-					//if ( error ) throw error;
+					if ( error ) { response.send( {recordAdded: false } ); }
 					console.log( 'set:' );
 					console.log( set );
 					console.log( 'result:' );
@@ -174,7 +174,7 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 			'SELECT * FROM organism_view WHERE id = ?', 
 			resolved.insertId, 
 			( error, result ) => {
-				//if ( error ) throw error;
+				if ( error ) { response.send( {recordAdded: false } ); }
 				console.log( 'set:' );
 				console.log( set );
 				console.log( 'result:' );
@@ -197,7 +197,7 @@ app.post( '/delete-organism', jsonParser, ( request, response ) => {
 		'DELETE FROM organism WHERE id = ? ', 
 		id, 
 		( error, result ) => {
-			//if ( error ) throw error;
+			if ( error ) { response.send( { recordDeleted: false } ) };
 			console.log( result );
 			response.send({
 				recordDeleted: true
@@ -207,69 +207,6 @@ app.post( '/delete-organism', jsonParser, ( request, response ) => {
 });
 
 // END Organism Database
-
-// START Music Database
-
-app.get('/edit-music-db', ( request, response ) => {
-	response.sendFile( __dirname + '/edit-music-db.html' ); 
-});
-
-app.post( '/get-artist-table', ( request, response ) => {
-	mysqlConnection.query(
-		'SELECT * FROM artist',
-		( error, result ) => {
-			//if ( error ) throw error;
-			// console.log( result );
-			response.send( result );
-	})
-})
-
-app.post( '/add-artist', jsonParser, ( request, response ) => {
-	console.log( request.body );
-	name = request.body.name;
-	mysqlConnection.query(
-		'INSERT INTO artist ( name ) VALUE ( ? )', 
-		name, 
-		function ( error, result ) {
-			//if ( error ) throw error;
-			console.log( result );
-			response.send({
-				id: result.insertId,
-				name: name
-			});
-		}
-	);
-});
-
-app.post( '/delete-artist', jsonParser, ( request, response ) => {
-	console.log( request.body );
-	id = request.body.id;
-	mysqlConnection.query(
-		'DELETE FROM artist WHERE id = ? ', 
-		id, 
-		( error, result ) => {
-			//if ( error ) throw error;
-			console.log( result );
-			response.send({
-				recordDeleted: true
-			});
-		}
-	);
-});
-
-// END Music Database
-
-// Update MySQL database
-
-app.post('/artist', jsonParser, function ( request, response ) {
-	console.log( request.body );
-	mysqlConnection.query('INSERT INTO artist ( name ) VALUE ( ? )', request.body.name, 
-		function ( error, result ) {
-			//if ( error ) throw error;
-			response.send('User added to database with ID: ' + result.insertId);
-		}
-	);
-});
 
 // Begin listening
 
