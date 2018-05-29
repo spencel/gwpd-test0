@@ -286,3 +286,5 @@ app.use(function(err, req, res, next) {
 app.listen( port, () => {
 	console.log( `Our app is running on heroku_b2cf77a96af7a57 (or localhost) and listening on port ${port}` );
 });
+
+module.exports = app;
