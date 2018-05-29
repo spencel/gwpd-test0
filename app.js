@@ -12,7 +12,6 @@ const helmet = require( 'helmet' );
 var app = express();
 app.use( compression() );
 app.use( helmet() );
-var port = process.env.PORT || 8080 // process.env.PORT lets the port be set by Heroku 
 var urlencodedParser = bodyParser.urlencoded( { extended: false } );
 var jsonParser = bodyParser.json()
 
@@ -279,12 +278,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
-
-// Begin listening
-
-app.listen( port, () => {
-	console.log( `Our app is running on heroku_b2cf77a96af7a57 (or localhost) and listening on port ${port}` );
 });
 
 module.exports = app;
