@@ -3,6 +3,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require( 'body-parser' );
+const multer = require( 'multer' );
 
 const compression = require( 'compression' );
 const helmet = require( 'helmet' );
@@ -14,7 +15,6 @@ app.use( compression() );
 app.use( helmet() );
 var urlencodedParser = bodyParser.urlencoded( { extended: false } );
 var jsonParser = bodyParser.json()
-
 
 // Database connection
 
@@ -272,6 +272,38 @@ app.post( '/add-organism', jsonParser, ( request, response ) => {
 		});
 	});
 });
+
+const multerConfig = {
+    
+storage: multer.diskStorage({
+ //Setup where the user's file will go
+ destination: function(req, file, next){
+   next(null, './public/photo-storage');
+   },   
+    
+    //Then give the file a unique name
+    filename: function(req, file, next){
+        console.log(file);
+        const ext = file.mimetype.split('/')[1];
+        next(null, file.fieldname + '-' + Date.now() + '.'+ext);
+      }
+    })
+};
+
+app.post(
+	'/add-organisms',
+	multer( multerConfig ).single( 'organisms' ),
+	( request, response, next ) => {
+		/*console.log( 'adding organisms' );
+		console.log( 'request:' );
+		console.log( request );
+		console.log( 'request.file:' );
+		console.log( request.file );*/
+		response.send({
+			isFileUploaded: false
+		});
+	}
+);
 
 app.post( '/delete-organism', jsonParser, ( request, response ) => {
 	console.log( request.body );

@@ -11,10 +11,13 @@
   	</style>
   </head>
   <body>
-  	<a href="/">Index</a>
+  	<a href="/">Index</a> | 
   	<a href="/edit-organism-db">Demo Organism Database</a>
   	<table id="organism" class="organism">
   		<caption>Demo - Organisms Database</caption>
+  		<tr id="buttons">
+  			<td colspan="10"><input id="show-import-records-form" type="submit" value="import" caption="add many organisms from a tab delimited text file"></td>
+  		</tr>
   		<tr>
     		<th>species name</th>
     		<th>common name</th>
@@ -59,18 +62,5 @@
         </td>
       <tr>
   	</table>
-    <!--<table id="artist" class="music">
-    	<caption>Artists</caption>
-    	<tr>
-    		<th>id</th>
-    		<th>name</th>
-    	<tr>
-    	<tr>
-    		<td></td>
-    		<td>
-    			<input id="artist" type="text" placeholder="new artist">
-    		</td>
-    	<tr>
-    </table>-->
   </body>
 </html>

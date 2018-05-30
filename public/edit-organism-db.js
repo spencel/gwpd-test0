@@ -38,87 +38,143 @@ jQuery( document ).ready( function () {
 
 	jQuery( function() {
     var typeName = [
-    	'bacteria',
-    	'helminth',
-    	'protist',
-    	'virus'
-    ];
-    var familyName = [
-	    'hexamitidae',
-	    'reoviridae',
-	    'retroviridae',
-	    'schistosomatidae',
-	    'vibrionaceae'
-    ];
-    var subfamilyName = [
-    	'giardiinae',
-    	'NO SUBFAMILY',
-    	'orthoretrovirinae',
-    	'sedoreovirinae',
-    	'vibrionaceae'
-    ];
-    var genusName = [
-    	'giardia',
-    	'lentivirus',
-    	'rotavirus',
-    	'schistosoma',
-    	'vibrio'
-    ];
-    var genomeTypeName = [
-    	'(+)ssDNA',
-    	'(+)ssRNA',
-    	'(-)ssDNA',
-    	'(-)ssRNA',
-    	'dsDNA',
-    	'dsRNA'
-    ];
-    var gramStainGroupName = [
-    	'gram-negative',
-    	'gram-positive',
-    	'NOT A PROKARYOTE'
-    ];
-    jQuery( "table#organism tr#new-record input#typeName" ).autocomplete({
-      source: typeName
-    });
-    jQuery( "table#organism tr#new-record input#familyName" ).autocomplete({
-      source: familyName
-    });
-    jQuery( "table#organism tr#new-record input#subfamilyName" ).autocomplete({
-      source: subfamilyName
-    });
-    jQuery( "table#organism tr#new-record input#genusName" ).autocomplete({
-      source: genusName
-    });
-    jQuery( "table#organism tr#new-record input#genomeTypeName" ).autocomplete({
-      source: genomeTypeName
-    });
-    jQuery( "table#organism tr#new-record input#gramStainGroupName" ).autocomplete({
-      source: gramStainGroupName
-    });
-  });
+			'bacteria',
+			'helminth',
+			'protist',
+			'virus',
+			'UNKNOWN',
+			'NOT APPLICABLE'
+		];
+		var familyName = [
+			'hexamitidae',
+			'reoviridae',
+			'retroviridae',
+			'schistosomatidae',
+			'vibrionaceae',
+			'UNKNOWN',
+			'NOT APPLICABLE'
+		];
+		var subfamilyName = [
+			'giardiinae',
+			'orthoretrovirinae',
+			'sedoreovirinae',
+			'vibrionaceae',
+			'UNKNOWN',
+			'NOT APPLICABLE'
+		];
+		var genusName = [
+			'giardia',
+			'lentivirus',
+			'rotavirus',
+			'schistosoma',
+			'vibrio',
+			'UNKNOWN',
+			'NOT APPLICABLE'
+		];
+		var genomeTypeName = [
+			'(+)ssDNA',
+			'(+)ssRNA',
+			'(-)ssDNA',
+			'(-)ssRNA',
+			'dsDNA',
+			'dsRNA',
+			'UNKNOWN',
+			'NOT APPLICABLE'
+		];
+		var gramStainGroupName = [
+			'gram-negative',
+			'gram-positive',
+			'UNKNOWN',
+			'NOT APPLICABLE'
+		];
+		jQuery( "table#organism tr#new-record input#typeName" ).autocomplete({
+			source: typeName
+		});
+		jQuery( "table#organism tr#new-record input#familyName" ).autocomplete({
+			source: familyName
+		});
+		jQuery( "table#organism tr#new-record input#subfamilyName" ).autocomplete({
+			source: subfamilyName
+		});
+		jQuery( "table#organism tr#new-record input#genusName" ).autocomplete({
+			source: genusName
+		});
+		jQuery( "table#organism tr#new-record input#genomeTypeName" ).autocomplete({
+			source: genomeTypeName
+		});
+		jQuery( "table#organism tr#new-record input#gramStainGroupName" ).autocomplete({
+			source: gramStainGroupName
+		});
+	});
 
 	// Handle click events
 	jQuery( document )
 	.on( 'click', function( event ) {
-		//event.preventDefault();
-		//event.stopPropagation();
-		//event.stopImmediatePropagation();
+		// don't prevent default here because if it's not an <a> element because links still need to be able to have default function
+		event.stopPropagation();
+		event.stopImmediatePropagation();
 
 		console.log( event );
 		var action = event.target.id;
 		console.log( 'action: ' + action );
 		switch( action ) {
 			case 'add-record':
+				event.preventDefault();
 				console.log( 'adding record' );
 				addRecord();
 				break;
 			case 'delete-record':
+				event.preventDefault();
 				console.log( 'deleting record' );
 				console.log( event.target.parentElement.parentElement.id );
 				deleteRecord( event.target.parentElement.parentElement.id );
 				break;
+			case 'show-import-records-form':
+				event.preventDefault();
+				appendImportRecordsForm();
+				break;
+			case 'submit-import-form':
+				event.preventDefault();
+				submitImportForm();
+				break;
 		}
 	});
+
+	// Create import records form
+	function appendImportRecordsForm() {
+		console.log( 'begin function importRecords()' );
+		jQuery( 'body' ).append(
+			"<div id='import-form-div'>" +
+				"<form id='import-form' action='/add-organisms' method='POST' target='hidden-iframe' enctype='multipart/form-data'>" +
+					"<input id='myfile' type='file' name='thisfile' accept='.txt' required>" +
+					//"<div class='horizontal-line'></div>" +
+				"</form>" +
+				"<input id='submit-import-form' name='submit-import-name' type='submit'>" +
+			"</div>"
+		);
+	}
+
+	// Submit import form
+	function submitImportForm() {
+		var data = jQuery( '#import-form' ).serialize();
+		console.log( jQuery( '#import-form' ) );
+		console.log( 'data:' );
+		console.log( data );
+		console.log( document.getElementById('myfile').files[0] );
+		jQuery.ajax({
+			url: '/add-organisms',
+			type: 'POST',
+			data: document.getElementById('myfile').files[0],
+			async: false,
+			cache: false,
+			contentType: false,
+			processData: false,
+			complete: function( response ) {
+				var data = JSON.parse( response.responseText );
+				console.log( data );		
+			}
+		})
+	}
 
 	// Add new record
 	function addRecord() {

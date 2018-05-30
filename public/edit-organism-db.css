@@ -27,3 +27,25 @@ td.delete-record {
 td input[type="text"] {
 	width: calc(100% - 4px);
 }
+tr#buttons td {
+	border-top: none;
+	border-right: none;
+	border-left: none;
+}
+div#import-form-div {
+	position: fixed;
+	display: inline-block;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid black;
+	padding: 5px;
+	text-align: center;
+	background-color: white;
+}
+div.horizontal-line {
+	height: 1px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	background-color: black;
+}
