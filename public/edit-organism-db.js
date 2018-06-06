@@ -140,17 +140,43 @@ jQuery( document ).ready( function () {
 		}
 	});
 
+	 jQuery("#but_upload").click(function(){
+
+        var fd = new FormData( jQuery( '#myform' )[ 0 ] );
+
+        console.log( 'fd:' );
+        console.log( fd );
+
+        jQuery.ajax({
+            url: '/add-organisms',
+            type: 'post',
+            data: fd,
+            contentType: false,
+            processData: false,
+            asyn: false,
+            cache: false,
+            success: function(response){
+                if(response != 0){
+                    $("#img").attr("src",response);
+                }else{
+                    alert('file not uploaded');
+                }
+            },
+        });
+    });
+
 	// Create import records form
 	function appendImportRecordsForm() {
 		console.log( 'begin function importRecords()' );
 		jQuery( 'body' ).append(
-			"<div id='import-form-div'>" +
-				"<form id='import-form' action='/add-organisms' method='POST' target='hidden-iframe' enctype='multipart/form-data'>" +
-					"<input id='myfile' type='file' name='thisfile' accept='.txt' required>" +
-					//"<div class='horizontal-line'></div>" +
-				"</form>" +
+			"<form id='uploadForm'" +
+				"enctype='multipart/form-data'" +
+				"action='/add-organisms'" +
+				"method='post'>" +
+				"<input type='file' name='organismsFile' accept='.txt' required>" +
+				"<div class='horizontal-line'></div>" +
 				"<input id='submit-import-form' name='submit-import-name' type='submit'>" +
-			"</div>"
+			"</form>"
 		);
 	}
 

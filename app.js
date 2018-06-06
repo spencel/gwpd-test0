@@ -80,7 +80,7 @@ app.post( '/get-organism-table', ( request, response ) => {
 	});
 });
 
-app.post( '/add-organism', jsonParser, ( request, response ) => {
+app.post( '/add-organism', bodyParser.json(), ( request, response ) => {
 	//response.sendFile( __dirname + '/index.html' ); 
 	console.log( 'request.body:' );
 	console.log( request.body );
@@ -285,20 +285,35 @@ storage: multer.diskStorage({
     filename: function(req, file, next){
         console.log(file);
         const ext = file.mimetype.split('/')[1];
-        next(null, file.fieldname + '-' + Date.now() + '.'+ext);
+        next(null, file.fieldname + '-' + Date.now() + '.' + ext);
       }
     })
 };
 
-app.post(
+/*app.post(
 	'/add-organisms',
 	multer( multerConfig ).single( 'organisms' ),
 	( request, response, next ) => {
-		/*console.log( 'adding organisms' );
+		console.log( 'adding organisms' );
 		console.log( 'request:' );
 		console.log( request );
 		console.log( 'request.file:' );
-		console.log( request.file );*/
+		console.log( request.file );
+		response.send({
+			isFileUploaded: false
+		});
+	}
+);*/
+
+app.post(
+	'/add-organisms',
+	bodyParser.json(),
+	( request, response, next ) => {
+		console.log( 'adding organisms' );
+		console.log( 'request:' );
+		console.log( request );
+		console.log( 'request.file:' );
+		console.log( request.file );
 		response.send({
 			isFileUploaded: false
 		});
